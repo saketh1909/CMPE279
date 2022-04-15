@@ -11,7 +11,7 @@
 int main(int argc, char const *argv[]) 
 { 
     int sock = 0, message; 
-    struct sockAddrIn serverAdd; 
+    struct sockAddr_in serverAdd; 
     char *hello = "Hello from client"; 
     char buffer[1024] = {0}; 
 
