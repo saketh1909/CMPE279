@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
     char buffer[1024] = {0};
     char *hello = "Hello from server";
     // struct passwd* passPtr;
-    // struct passwd* pwd_ptr;
+    struct passwd* pwd_ptr;
 
 
     // Creating socket file descriptor
