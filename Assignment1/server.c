@@ -9,7 +9,7 @@
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, valread;
+    int server_fd, new_socket, message;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
@@ -53,25 +53,26 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-    pid_t childPId,pId;
-    childPId = fork();
+    pid_t childProcessID,pid;
+    childProcessID = fork();
     struct passwd* pwd;
-    int status = 0;
+    int status;
     
-    if(childPId ==0){
+    if(childProcessID ==0){
         printf("\nFork Sucessful \n");
         pwd = getpwnam("nobody");
-        pId = setuid(pwd->pw_uid);
-        if(pId==0){
+        pid = setuid(pwd->pw_uid);
+        if(pid==0){
             status = 1;
         }
+        status = 0;
     } 
 
     if(status){
-        valread = read(new_socket, buffer, 1024);
-        printf("Read %d bytes: %s\n", valread , buffer);
-        send(new_socket, hello, strlen(hello), 0);
-        printf("Hello Message Sent\n");
+            message = read(new_socket, buffer, 1024);
+            printf("Read %d bytes: %s\n", message , buffer);
+            send(new_socket, hello, strlen(hello), 0);
+            printf("Hello Message Sent\n");
     }
 
     wait();
