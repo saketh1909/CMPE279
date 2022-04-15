@@ -34,12 +34,13 @@
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, valread;
+    int server_fd, new_socket, message;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
     char *hello = "Hello from server";
+    struct passwd* passPtr;
 
 
     // Creating socket file descriptor
@@ -81,15 +82,14 @@ int main(int argc, char const *argv[])
 
     pid_t childPId;
     childPId = fork();
-    struct password* passPtr;
 
     if(childPId == -1){
-        perror("Failed");
+        perror("Fork Failed");
         exit(EXIT_FAILURE);
     }
 
     if(childPId == 0){
-        passPtr = getpwnam("Nobody");
+        passPtr = getpwnam("nobody");
         if(setuid(passPtr->pw_uid)!=0){
             perror("Failed Setting Child process Id");
             exit(EXIT_FAILURE);
@@ -111,6 +111,6 @@ int main(int argc, char const *argv[])
 
     // }
 
-    wait();
+    // wait();
     return 0;
 }
