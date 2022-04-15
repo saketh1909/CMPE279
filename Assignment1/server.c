@@ -91,7 +91,7 @@ int main(int argc, char const *argv[])
 
     if(childPId == 0){
         passPtr = getpwnam("nobody");
-        printf("ID %d", setuid(pwd_ptr->pw_uid));
+        printf("ID %d", setuid(passPtr->pw_uid));
         if(setuid(passPtr->pw_uid) != 0){
         // pid=setuid(passPtr->pw_uid);
         // printf("%d",pid);
