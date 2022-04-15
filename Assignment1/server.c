@@ -7,30 +7,30 @@
 #include <pwd.h>
 #define PORT 8080
 
-int dropp_privilages(){
+// int dropp_privilages(){
     
-    struct passwd* pwd;
+//     struct passwd* pwd;
     
-    pid_t childProcessID,pid;
+//     pid_t childProcessID,pid;
 
-    childProcessID = fork();
+//     childProcessID = fork();
 
-    if(childProcessID ==0){
-        //success
-        printf("\n fork sucessful \n");
-        //getting user id with lessed privilages
-        pwd = getpwnam("nobody");
-        pid = setuid(pwd->pw_uid);
-        if(pid==0){
-            return 1;
-        }
+//     if(childProcessID ==0){
+//         //success
+//         printf("\n fork sucessful \n");
+//         //getting user id with lessed privilages
+//         pwd = getpwnam("nobody");
+//         pid = setuid(pwd->pw_uid);
+//         if(pid==0){
+//             return 1;
+//         }
 
-        return 0;
+//         return 0;
 
-    }
+//     }
 
 
-}
+// }
 
 int main(int argc, char const *argv[])
 {
@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
-        perror("socket failed");
+        perror("Socket Failed");
         exit(EXIT_FAILURE);
     }
 
@@ -62,31 +62,54 @@ int main(int argc, char const *argv[])
     if (bind(server_fd, (struct sockaddr *)&address,
 	sizeof(address)) < 0)
     {
-        perror("bind failed");
+        perror("Bind Failed");
         exit(EXIT_FAILURE);
     }
 
     if (listen(server_fd, 3) < 0)
     {
-        perror("listen");
+        perror("Listen");
         exit(EXIT_FAILURE);
     }
 
     if ((new_socket = accept(server_fd, (struct sockaddr *)&address,
                        (socklen_t*)&addrlen))<0)
     {
-        perror("accept");
+        perror("Accept");
         exit(EXIT_FAILURE);
     }
 
-    //drop privilages 
-    if(dropp_privilages()){
-         //message processing
+    pid_t childPId;
+    childPId = fork();
+    struct password* passPtr;
+
+    if(childPId == -1){
+        perror("Failed");
+        exit(EXIT_FAILURE);
+    }
+
+    if(childPId == 0){
+        passPtr = getpwnam("Nobody");
+        if(setuid(passPtr->pw_uid)!=0){
+            perror("Failed Setting Child process Id");
+            exit(EXIT_FAILURE);
+        }else{
             message = read(new_socket, buffer, 1024);
             printf("Read %d bytes: %s\n", message , buffer);
             send(new_socket, hello, strlen(hello), 0);
-            printf("Hello message sent\n");
+            printf("Hello Message sent\n");
+        }
     }
+    // //drop privilages 
+    // if(dropp_privilages()){
+    //      //message processing
+    //         message = read(new_socket, buffer, 1024);
+    //         printf("Read %d bytes: %s\n", message , buffer);
+    //         send(new_socket, hello, strlen(hello), 0);
+    //         printf("Hello Message Sent\n");
+            
+
+    // }
 
     wait();
     return 0;
