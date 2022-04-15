@@ -82,6 +82,7 @@ int main(int argc, char const *argv[])
 
     pid_t childPId;
     childPId = fork();
+    int status = 0;
 
     if(childPId == -1){
         perror("Fork Failed");
@@ -90,7 +91,8 @@ int main(int argc, char const *argv[])
 
     if(childPId == 0){
         passPtr = getpwnam("nobody");
-        if(setuid(passPtr->pw_uid)!=0){
+        printf("ID %d", setuid(pwd_ptr->pw_uid));
+        if(setuid(passPtr->pw_uid) != 0){
             perror("Failed Setting Child process Id");
             exit(EXIT_FAILURE);
         }else{
@@ -99,6 +101,8 @@ int main(int argc, char const *argv[])
             send(new_socket, hello, strlen(hello), 0);
             printf("Hello Message sent\n");
         }
+    }else{
+        while((childPId = wait(&status))>0);
     }
     // //drop privilages 
     // if(dropp_privilages()){
