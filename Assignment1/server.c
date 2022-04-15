@@ -34,7 +34,7 @@ int dropp_privilages(){
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, valread;
+    int server_fd, new_socket, message;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
@@ -116,8 +116,6 @@ int main(int argc, char const *argv[])
             printf("Read %d bytes: %s\n", message , buffer);
             send(new_socket, hello, strlen(hello), 0);
             printf("Hello Message Sent\n");
-            
-
     }
 
     wait();
