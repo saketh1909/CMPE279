@@ -34,14 +34,14 @@
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, message, valread;
+    int server_fd, new_socket, message;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
     char *hello = "Hello from server";
     // struct passwd* passPtr;
-    struct passwd* pwd_ptr;
+    // struct passwd* pwd_ptr;
 
 
     // Creating socket file descriptor
@@ -109,52 +109,38 @@ int main(int argc, char const *argv[])
     // }else{
     //     while((childPId = wait(&status))>0);
     // }
+    //drop privilages
 
+    struct passwd* pwd;
+    int status;
+    
+    pid_t childProcessID,pid;
 
+    childProcessID = fork();
 
-
-    //drop privilages 
-    // if(dropp_privilages()){
-    //      //message processing
-    //         message = read(new_socket, buffer, 1024);
-    //         printf("Read %d bytes: %s\n", message , buffer);
-    //         send(new_socket, hello, strlen(hello), 0);
-    //         printf("Hello Message Sent\n");
-    // }
-
-    // wait();
-
-
-
-    pid_t pid = fork(); //
-    int status = 0; //
-    if(pid == -1) //
-    {
-        perror("Fork failed"); //
-        exit(EXIT_FAILURE); //
-    }   //
-
-    if(pid == 0) // child process //
-    { 
-        pwd_ptr = getpwnam("nobody");
-        // if(setuid(pwd_ptr->pw_uid) == -1){
-        printf("Log: Child Process: UID of nobody=%ld\n",(long) pwd_ptr->pw_uid);
-        printf("aaaaaa %d", setuid(pwd_ptr->pw_uid));
-        if(setuid(pwd_ptr->pw_uid) != 0){
-            perror("failed to set id of child process");
-            // printf("The user ID is %d not 99 \n", getuid());
-            exit(EXIT_FAILURE);
-        } else {
-            printf("The user ID is %d\n", getuid());
-            valread = read(new_socket, buffer, 1024);
-            printf("Read %d bytes: %s\n", valread, buffer);
-            send(new_socket, hello, strlen(hello), 0);
-            printf("Hello message sent\n");
-            printf("*** Child process is done ***\n");
+    if(childProcessID ==0){
+        //success
+        printf("\n fork sucessful \n");
+        //getting user id with lessed privilages
+        pwd = getpwnam("nobody");
+        pid = setuid(pwd->pw_uid);
+        if(pid==0){
+            status = 1;
         }
-    } else {
-        while ((pid = wait(&status)) > 0);
-        printf("*** Parent process is done ***\n");
+
+        status = 0;
+
+    } 
+
+
+    if(status){
+         //message processing
+            message = read(new_socket, buffer, 1024);
+            printf("Read %d bytes: %s\n", message , buffer);
+            send(new_socket, hello, strlen(hello), 0);
+            printf("Hello Message Sent\n");
     }
+
+    wait();
     return 0;
 }
