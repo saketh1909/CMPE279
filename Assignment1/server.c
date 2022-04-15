@@ -108,10 +108,11 @@ int main(int argc, char const *argv[])
             printf("Hello message sent\n");
             printf("*** Child process is done ***\n");
         }
-    } else {
-        while ((pid = wait(&status)) > 0);
-        printf("*** Parent process is done ***\n");
-    }
+    } 
+    // else {
+    //     while ((pid = wait(&status)) > 0);
+    //     printf("*** Parent process is done ***\n");
+    // }
 
 
 
