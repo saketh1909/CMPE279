@@ -34,13 +34,14 @@
 
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, message;
+    int server_fd, new_socket, valread;
     struct sockaddr_in address;
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
     char *hello = "Hello from server";
-    struct passwd* passPtr;
+    // struct passwd* passPtr;
+    struct passwd* pwd_ptr;
 
 
     // Creating socket file descriptor
@@ -80,34 +81,75 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
 
-    pid_t childPId;
-    childPId = fork();
-    int status = 0;
 
-    if(childPId == -1){
-        perror("Fork Failed");
-        exit(EXIT_FAILURE);
-    }
-    pid_t pid;
-    if(childPId == 0){
-        passPtr = getpwnam("nobody");
-        pid=setuid(passPtr->pw_uid);
-        printf("ID %d", pid);
-        if(pid != 0){
-        // pid=setuid(passPtr->pw_uid);
-        // printf("%d",pid);
-        // if(pid!=0){
-            perror("Failed Setting Child process Id");
+    pid_t pid = fork(); //
+    int status = 0; //
+    if(pid == -1) //
+    {
+        perror("Fork failed"); //
+        exit(EXIT_FAILURE); //
+    }   //
+
+    if(pid == 0) // child process //
+    { 
+        pwd_ptr = getpwnam("nobody");
+        // if(setuid(pwd_ptr->pw_uid) == -1){
+        printf("Log: Child Process: UID of nobody=%ld\n",(long) pwd_ptr->pw_uid);
+        printf("aaaaaa %d", setuid(pwd_ptr->pw_uid));
+        if(setuid(pwd_ptr->pw_uid) != 0){
+            perror("failed to set id of child process");
+            // printf("The user ID is %d not 99 \n", getuid());
             exit(EXIT_FAILURE);
-        }else{
-            message = read(new_socket, buffer, 1024);
-            printf("Read %d bytes: %s\n", message , buffer);
+        } else {
+            printf("The user ID is %d\n", getuid());
+            valread = read(new_socket, buffer, 1024);
+            printf("Read %d bytes: %s\n", valread, buffer);
             send(new_socket, hello, strlen(hello), 0);
-            printf("Hello Message sent\n");
+            printf("Hello message sent\n");
+            printf("*** Child process is done ***\n");
         }
-    }else{
-        while((childPId = wait(&status))>0);
+    } else {
+        while ((pid = wait(&status)) > 0);
+        printf("*** Parent process is done ***\n");
     }
+
+
+
+
+    // pid_t childPId;
+    // childPId = fork();
+    // int status = 0;
+
+    // if(childPId == -1){
+    //     perror("Fork Failed");
+    //     exit(EXIT_FAILURE);
+    // }
+    // pid_t pid;
+    // if(childPId == 0){
+    //     passPtr = getpwnam("nobody");
+    //     pid=setuid(passPtr->pw_uid);
+    //     printf("ID %d", pid);
+    //     if(pid != 0){
+    //     // pid=setuid(passPtr->pw_uid);
+    //     // printf("%d",pid);
+    //     // if(pid!=0){
+    //         perror("Failed Setting Child process Id");
+    //         exit(EXIT_FAILURE);
+    //     }else{
+    //         message = read(new_socket, buffer, 1024);
+    //         printf("Read %d bytes: %s\n", message , buffer);
+    //         send(new_socket, hello, strlen(hello), 0);
+    //         printf("Hello Message sent\n");
+    //     }
+    // }else{
+    //     while((childPId = wait(&status))>0);
+    // }
+
+
+
+
+
+
     // //drop privilages 
     // if(dropp_privilages()){
     //      //message processing
