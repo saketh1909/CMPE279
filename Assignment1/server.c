@@ -88,11 +88,12 @@ int main(int argc, char const *argv[])
         perror("Fork Failed");
         exit(EXIT_FAILURE);
     }
-
+    pid_t pid;
     if(childPId == 0){
         passPtr = getpwnam("nobody");
-        printf("ID %d", setuid(passPtr->pw_uid));
-        if(setuid(passPtr->pw_uid) != 0){
+        pid=setuid(passPtr->pw_uid);
+        printf("ID %d", pid);
+        if(pid != 0){
         // pid=setuid(passPtr->pw_uid);
         // printf("%d",pid);
         // if(pid!=0){
