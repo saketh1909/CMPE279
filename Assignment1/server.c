@@ -118,6 +118,6 @@ int main(int argc, char const *argv[])
             printf("Hello Message Sent\n");
     }
 
-    wait();
+    // wait();
     return 0;
 }
