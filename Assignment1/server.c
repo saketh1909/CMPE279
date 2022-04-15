@@ -10,7 +10,7 @@
 int main(int argc, char const *argv[])
 {
     int server_fd, new_socket, message;
-    struct sockaddr_in address;
+    struct sockAddrIn address;
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};

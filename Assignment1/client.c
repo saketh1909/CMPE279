@@ -10,8 +10,8 @@
    
 int main(int argc, char const *argv[]) 
 { 
-    int sock = 0, valread; 
-    struct sockaddr_in serv_addr; 
+    int sock = 0, message; 
+    struct sockAddrIn serverAdd; 
     char *hello = "Hello from client"; 
     char buffer[1024] = {0}; 
 
@@ -21,19 +21,19 @@ int main(int argc, char const *argv[])
         return -1; 
     } 
    
-    memset(&serv_addr, '0', sizeof(serv_addr)); 
+    memset(&serverAdd, '0', sizeof(serverAdd)); 
    
-    serv_addr.sin_family = AF_INET; 
-    serv_addr.sin_port = htons(PORT); 
+    serverAdd.sin_family = AF_INET; 
+    serverAdd.sin_port = htons(PORT); 
        
     // Convert IPv4 and IPv6 addresses from text to binary form 
-    if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)  
+    if(inet_pton(AF_INET, "127.0.0.1", &serverAdd.sin_addr)<=0)  
     { 
         printf("\nInvalid address/ Address not supported \n"); 
         return -1; 
     } 
    
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    if (connect(sock, (struct sockaddr *)&serverAdd, sizeof(serverAdd)) < 0)
     { 
         printf("\nConnection Failed\n"); 
         return -1; 
@@ -41,8 +41,8 @@ int main(int argc, char const *argv[])
 
     send(sock, hello, strlen(hello), 0 ); 
     printf("Hello message sent\n"); 
-    valread = read(sock, buffer, 1024); 
-    printf("Read %d bytes: %s\n", valread, buffer);
+    message = read(sock, buffer, 1024); 
+    printf("Read %d bytes: %s\n", message, buffer);
 
     return 0; 
 } 
