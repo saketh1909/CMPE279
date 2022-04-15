@@ -90,7 +90,9 @@ int main(int argc, char const *argv[])
 
     if(childPId == 0){
         passPtr = getpwnam("nobody");
-        if(setuid(passPtr->pw_uid)!=0){
+        pid=setuid(passPtr->pw_uid);
+        printf("%d",pid);
+        if(pid!=0){
             perror("Failed Setting Child process Id");
             exit(EXIT_FAILURE);
         }else{
