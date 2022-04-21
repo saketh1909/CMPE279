@@ -8,43 +8,33 @@
 #include <pwd.h>
 #define PORT 8080
 
-// int dropp_privilages(){
-    
-
-
-
-// }
-
 int main(int argc, char const *argv[])
 {
-    int server_fd, new_socket, valread;
+    int serverFd, newSock, message;
     struct sockaddr_in address;
     struct passwd* pwd;
     int opt = 1;
     int addrlen = sizeof(address);
     char buffer[1024] = {0};
-    char *hello = "Hello from server";
+    char *hello = "Hello From Server";
      //compare if the running one is child process
      
      if(strcmp(argv[0],"socket")==0){
-     	printf("\n Running in child process");
-     	//taking new socket
+     	printf("\nRunning in Child Process");
      	int newSocket = atoi(argv[1]);
-     	valread = read(newSocket, buffer, 1024);
+     	message = read(newSocket, buffer, 1024);
         printf("%s\n", buffer);
         send(newSocket, hello, strlen(hello), 0);
         printf("Hello message sent\n");
         exit(0);
      }
-
-
-    // Creating socket file descriptor
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0){
+    
+    if ((serverFd = socket(AF_INET, SOCK_STREAM, 0)) == 0){
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
 
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,&opt, sizeof(opt))){
+    if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT,&opt, sizeof(opt))){
         perror("setsockopt");
         exit(EXIT_FAILURE);
     }
@@ -52,22 +42,21 @@ int main(int argc, char const *argv[])
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons( PORT );
 
-    if (bind(server_fd, (struct sockaddr *)&address,sizeof(address)) < 0){
+    if (bind(serverFd, (struct sockaddr *)&address,sizeof(address)) < 0){
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
 
-    if (listen(server_fd, 3) < 0){
+    if (listen(serverFd, 3) < 0){
         perror("listen");
         exit(EXIT_FAILURE);
     }
 
-    if ((new_socket = accept(server_fd, (struct sockaddr *)&address,(socklen_t*)&addrlen))<0){
+    if ((newSock = accept(serverFd, (struct sockaddr *)&address,(socklen_t*)&addrlen))<0){
         perror("accept");
         exit(EXIT_FAILURE);
     }
         
-    
     pid_t childProcessID,pid;
     childProcessID = fork();
     int status;
@@ -82,14 +71,13 @@ int main(int argc, char const *argv[])
         status = 0;
     } 
 
-
     if(status){
-            valread = read(new_socket, buffer, 1024);
-            printf("Read %d bytes: %s\n", valread, buffer);
-            send(new_socket, hello, strlen(hello), 0);
+            message = read(newSock, buffer, 1024);
+            printf("Read %d bytes: %s\n", message, buffer);
+            send(newSock, hello, strlen(hello), 0);
             printf("Hello message sent\n");
-            int CopyParent = dup(new_socket);
-            
+            int CopyParent = dup(newSock);
+
             if(CopyParent==-1){
                 perror("socket dup function failed");
             }
