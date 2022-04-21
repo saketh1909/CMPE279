@@ -4,8 +4,8 @@
 ![SERVER](./server.png)
 
 ## Output Assignment 2
-![CLIENT](./Assignment/c1.png)
-![SERVER](./Assignment/s1.png)
+![CLIENT](./Assignment2/c2.png)
+![SERVER](./Assignment2/s2.png)
 
 
 ### Saketh Gali - 015504853  
